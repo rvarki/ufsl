@@ -1,0 +1,46 @@
+### Pre-conditions
+* This codebase has only been tested on MacOS and CentOS but will likely work on most OSs that support java8, maven, junit and jcommander
+* In order to function properly, the JVM must be given more memory than the a total size of the locker after adding your files because all file data will need to fit on the heap at the same time
+* This means in order to put 100GB of unique files into the system you will need 100GB of RAM allocated to the jvm
+* If you have identical files, you only need enough ram for the size of the locker after they are added. For example 10 1GB files that are identcal will only require 1GB of ram to function because they will be unioned
+* The gui has been moved to the "GUI-Branch" because we have run into issues with it on certain machines and have not been able to fully resolve these issues. The gui is fully functional so long as the correct javafx version (8) is present on the machine but the lab machines do not appear to allow this dependency to be installed
+* javafx seems to come by default with some distributions of java 8 but not others. This may work on your local machine without any changes if you have java 8 installed
+
+### Installation
+* Install [Apache Maven](https://maven.apache.org/download.cgi)
+* Untar the file you get tar -zxvf apache-maven-3.6.3-bin.tar.gz
+* add maven to your path: export PATH=/WhereverYourFileIsInstalledTo/apache-maven-3.6.3/bin:$PATH
+* From the directory of our repo run mvn clean install to install the required libraries and run the junit tests
+    * MAKE SURE YOU'RE RUNNING WITH JAVA 1.8 otherwise you may get errors here (try: "java -version". If it isn't 1.8, install 1.8 and set the jdk as your JAVA_HOME)
+    * Please also ensure that your version of java 8 comes with javafx. If it does not install the proper sdk here (https://www.oracle.com/java/technologies/javase-jdk8-downloads.html).
+      Please note that not all of the versions from this page seem to contain javafx (Linux x64 Compressed Archive works on the lab computers).
+    * Set JAVA_HOME with "export JAVA_HOME=/filePathToJavaInstallWithJavaFX/jdk1.8.0_251/bin/java"
+* You can also run mvn test to run the tests without redownloading the required libraries
+* You should see some test output, and if everything has gone well, all 6 tests should pass
+* Please configure intellij with one of the following Java SDK's (depending on your system): https://www.oracle.com/java/technologies/javase-jdk8-downloads.html.
+
+### Execution
+* Running tests: after installing mvn with the instructions above, run mvn test from the repo root directory to run the tests
+    * Tests can also be run one at a time by clicking the play button next to them in IDEA and hitting run test
+    * BasicFunctionalitySystemTest test adding a file, retrieving the file and removing the file
+    * dirDifferenceSystemTest tests finding the difference between two directories by CONTENTS of files(not by name)
+    * ListSystemTest tests listing the current contents of the system
+    * RegexSystemTest ensures that the --regex flag returns only the files that match the input expression
+    * UnionSizeReductionBenchmark tests that adding two identical files does not increase the size of the locker by 2* the size of the original file
+    * The final InstructionBenchmarkTest tests adding many files and performing operations as a speed benchmark. You can change the stringLength const at the beginning to make the files larger or smaller.
+* Running CLI With Intellij: Navigate to src/main/java/org/example/ufsl.java and click the play button next to the main function
+   * If you would like to run the program one command at a time hit edit and add program arguments as detailed in the README
+   * If you would like to run the program in interactive mode, run with no arguments or with the --lockerName flags as detailed in the README
+   * In interactive mode you can enter commands continuously or type "quit" to exit
+   * If you choose to use the GUI reference the readme for use instructions
+* Running CLI with bash script and precompiled jar file
+   * run ./ufsl followed by one of the commands listed in the readme
+   * i.e ./ufsl -user myUser --addFile pathToFile/text.txt lockerPath
+
+### Use Example (See README for more examples and use specifications)
+* "-user user1 --addFile a/path/on/my/OS/file.txt made/up/virtual/path/in/locker"    //File is added to the virtual path as file.txt
+* "-user user1 --retrieve made/up/virtual/path/in/locker/file.txt a/path/on/my/OS"   //File will be written back to the OS as file.txt
+* "-user user1 --remove made/up/virtual/path/in/locker/file.txt"                     //Removes the given file
+* "-user user1 --list"                                                               //Lists all of the files belonging to a user
+* --dirDif user1/path/to/folder user2/path/to/folder                                 //Prints the differences between the contents of the folders by contents not name
+* -user user1 --regex gr[ae]y                                                        //Returns files containing "grey" or "gray"

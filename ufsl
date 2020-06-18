@@ -1,0 +1,2 @@
+#!/bin/bash
+java -jar ./out/artifacts/ufsl_jar/ufsl.jar $1
